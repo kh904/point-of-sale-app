@@ -45,16 +45,21 @@ checkout_start_at = datetime.datetime.now()
 #        product_ids.append(product_id)
 
 
-product_ids = [3,2,1,1]
+product_ids = []
 
-
+while True:
+    product_id = input("Hey, please input a product identifier: ")
+    if product_id == "DONE":
+        break #break the loop
+    else:
+        product_ids.append(int(product_id)) #convert it o integer because user input is int
 
 #for product_id in product_ids:
     #print(product_id)
 
 #Print everything (receipt) at the sametime, after capturing inputs
 
-raw_total = 0
+#raw_total = 0
 running_total_price = 0
 
 print("                     ")
@@ -62,10 +67,10 @@ print("---------------------")
 print("Ken's Random Provisions")
 print("Phone: (Please don't call me)")
 print("www.kennethhuynh.com")
-print("---------------------")
 print(checkout_start_at.strftime("%A, %B %d, %Y at %I:%M %p"))
+print("---------------------")
 
-print("PURCHASE ITEMS: ")
+print("PURCHASED ITEMS: ")
 for product_id in product_ids:
     matching_products = [product for product in products if product ["id"] == product_id]
     matching_product = matching_products[0] #assumes only one match per product ID (no dupes)
