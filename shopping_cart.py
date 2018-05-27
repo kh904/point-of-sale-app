@@ -52,7 +52,7 @@ while True:
     if product_id == "DONE":
         break #break the loop
     else:
-        product_ids.append(int(product_id)) #convert it o integer because user input is int
+        product_ids.append(int(product_id)) #convert it to integer because user input is int
 
 #for product_id in product_ids:
     #print(product_id)
