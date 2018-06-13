@@ -1,56 +1,147 @@
-#POS.py
+import getpass
+import csv
+user_name = getpass.getuser()
 
-import datetime #invoking the time module
-products = [
-    {"id":1, "name": "Chocolate Sandwich Cookies", "department": "snacks", "aisle": "cookies cakes", "price": 3.50},
-    {"id":2, "name": "All-Seasons Salt", "department": "pantry", "aisle": "spices seasonings", "price": 4.99},
-    {"id":3, "name": "Robust Golden Unsweetened Oolong Tea", "department": "beverages", "aisle": "tea", "price": 2.49},
-    {"id":4, "name": "Smart Ones Classic Favorites Mini Rigatoni With Vodka Cream Sauce", "department": "frozen", "aisle": "frozen meals", "price": 6.99},
-    {"id":5, "name": "Green Chile Anytime Sauce", "department": "pantry", "aisle": "marinades meat preparation", "price": 7.99},
-    {"id":6, "name": "Dry Nose Oil", "department": "personal care", "aisle": "cold flu allergy", "price": 21.99},
-    {"id":7, "name": "Pure Coconut Water With Orange", "department": "beverages", "aisle": "juice nectars", "price": 3.50},
-    {"id":8, "name": "Cut Russet Potatoes Steam N' Mash", "department": "frozen", "aisle": "frozen produce", "price": 4.25},
-    {"id":9, "name": "Light Strawberry Blueberry Yogurt", "department": "dairy eggs", "aisle": "yogurt", "price": 6.50},
-    {"id":10, "name": "Sparkling Orange Juice & Prickly Pear Beverage", "department": "beverages", "aisle": "water seltzer sparkling water", "price": 2.99},
-    {"id":11, "name": "Peach Mango Juice", "department": "beverages", "aisle": "refrigerated", "price": 1.99},
-    {"id":12, "name": "Chocolate Fudge Layer Cake", "department": "frozen", "aisle": "frozen dessert", "price": 18.50},
-    {"id":13, "name": "Saline Nasal Mist", "department": "personal care", "aisle": "cold flu allergy", "price": 16.00},
-    {"id":14, "name": "Fresh Scent Dishwasher Cleaner", "department": "household", "aisle": "dish detergents", "price": 4.99},
-    {"id":15, "name": "Overnight Diapers Size 6", "department": "babies", "aisle": "diapers wipes", "price": 25.50},
-    {"id":16, "name": "Mint Chocolate Flavored Syrup", "department": "snacks", "aisle": "ice cream toppings", "price": 4.50},
-    {"id":17, "name": "Rendered Duck Fat", "department": "meat seafood", "aisle": "poultry counter", "price": 9.99},
-    {"id":18, "name": "Pizza for One Suprema Frozen Pizza", "department": "frozen", "aisle": "frozen pizza", "price": 12.50},
-    {"id":19, "name": "Gluten Free Quinoa Three Cheese & Mushroom Blend", "department": "dry goods pasta", "aisle": "grains rice dried goods", "price": 3.99},
-    {"id":20, "name": "Pomegranate Cranberry & Aloe Vera Enrich Drink", "department": "beverages", "aisle": "juice nectars", "price": 4.25}
-] # based on data from Instacart: https://www.instacart.com/datasets/grocery-shopping-2017
 
 checkout_start_at = datetime.datetime.now()
 
-#print("______________________")
-#print("Ken's Random Provisions")
-#print("Phone: (Please don't call me)")
-#print("www.kennethhuynh.com")
-#print("______________________")
-#print(checkout_start_at.strftime("%A, %B %d, %Y at %I:%M %p"))
-
-#Capture inputs here
-
-#product_ids = []
-
-#while True:
-#    product_id = input(" Hey, please input a product identifier: ")
-#    if product_id == "DONE":
-#        break #stop the infinite loop
-#    else:
-#        product_ids.append(product_id)
+print("______________________")
+print("Ken's Random Provisions, " + (user_name) + "!")
+print("Phone: (Please don't call me)")
+print("www.kennethhuynh.com")
+print("______________________")
+print(checkout_start_at.strftime("%A, %B %d, %Y at %I:%M %p"))
 
 
-product_ids = []
+# Read csv
+#
 
-while True:
-    product_id = input("Hey, please input a product identifier: ")
-    if product_id == "DONE":
-        break #break the loop
+products = []
+
+#TODO: open the file and populate the products list with product dictionaries
+
+csv_file_path = r"C:\Users\huynhk5\Desktop\Python Files\Inventory\db\products.csv"
+
+with open(csv_file_path, "r") as csv_file:
+    reader = list(csv.DictReader(csv_file, delimiter=','))
+    for row in reader:
+        products.append(row)
+
+headers = ["id", "name", "aisle", "department", "price"]
+
+new_header_info = [header for header in headers if header != "id"]
+
+def load_id(product):
+    return int(product["id"])
+
+def new_auto_id():
+    product_ids = map(load_id, products)
+    return max(product_ids) + 1
+
+print("There are {0} products in the database.".format(len(products))) # .format(len(products)) " + str(len(products)) + " this should return a dynamic count of the products in the database
+
+#
+# menu
+#
+
+menu = """
+    command | operation | description
+    ------- | --------- | -----------------
+       1    | 'List'    | Display a list of product identifiers and names
+       2    | 'Show'    | Show information about a product
+       3    | 'Create'  | Add a new product
+       4    | 'Update'  | Edit an existing product
+       5    | 'Destroy' | Delete an existing product
+Please select a command: """
+
+new_operation = input(menu)
+new_operation = new_operation.title()
+
+d = {}
+d["List"] = 1
+d["Show"] = 2
+d["Create"] = 3
+d["Update"] = 4
+d["Destroy"] = 5
+
+#
+# Define command operations
+#
+
+def list_products():
+    print("")
+    print("---- LISTING PRODUCTS:")
+    print("")
+    for product in products:
+        print(" + Product #" + str(product["id"]) + ": " + product["name"])
+
+def show_product():
+    print("")
+    product_number = input("What is the Product #? ")
+    product = [n for n in products if n["id"] == product_number][0]
+    print("")
+    if product:
+        print(" + The product you identified is: ", product)
+    else:
+        print("+ That Product # was not found", product)
+
+def create_product():
+    print("")
+    print("---- Creating a Product...")
+    print("")
+    product = {"id": new_auto_id()}
+    for header in new_header_info:
+        product[header] = input("Please input the {0}: ".format(header))
+    products.append(product)
+    print("Product created. Your new product is: ", product)
+
+def update_product():
+    print("")
+    product_id = input("---- Let's update a product. What product would you like to update? ")
+    product = [n for n in products if n["id"] == product_id][0]
+    print("")
+    if product:
+        print("Cool! Let's update the product.")
+        for header in new_header_info:
+            product[header] = input("Change '{0}' from '{1}' to: ".format(header, product[header]))
+        print("Product has been updated to: ", product)
+    else:
+        print("Product not found ", product_id)
+
+def destroy_product():
+    print("")
+    product_id = input("---- Which product would you like to destroy? ")
+    product = [n for n in products if n["id"] == product_id][0]
+    print("")
+    if product:
+        print("Product being destroyed: ", product)
+        del products[products.index(product)]
+    else:
+        print("Product not found ", product_id)
+
+if new_operation == "1": list_products()
+elif new_operation == "2": show_product()
+elif new_operation == "3": create_product()
+elif new_operation == "4": update_product()
+elif new_operation == "5": destroy_product()
+else:
+    print("")
+    print("Something's not right. Please choose one of the available commands.")
+
+#
+# Write products to file
+
+#TODO: open the file and write a list of dictionaries. each dict should represent a product.
+
+with open(csv_file_path, "w") as csv_file:
+    writer = csv.DictWriter(csv_file, fieldnames=headers)
+    writer.writeheader()
+    for product in products:
+        writer.writerow(product)
+
+#Reste products from reset.py
+def reset_products_file(filename="products.csv", from_filename="products_default.csv"):
+     print("RESETTING DEFAULTS")
     else:
         product_ids.append(int(product_id)) #convert it to integer because user input is int
 
